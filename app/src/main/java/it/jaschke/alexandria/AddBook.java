@@ -76,16 +76,21 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 String ean =s.toString();
                 //catch isbn10 numbers
                 if(ean.length()==10 && !ean.startsWith("978")){
+                    //Clearing in loader now.
+                    //clearFields();
                     ean="978"+ean;
                 }
-                if(ean.length()<13){
-                    clearFields();
+                if(ean.length() < 13){
+                    //If we have a valid book displayed then dont clear it out.
+                    //In fact this would be better in the actual intent call.
+                    //Why should we clear this out so much?
+                    //clearFields();
                     return;
                 }
+
                 //Once we have an ISBN, start a book intent
                 //Need to check if network is available to prevent crashing when offline.
                 if (isNetworkAvailable()) {
-
                     Intent bookIntent = new Intent(getActivity(), BookService.class);
                     bookIntent.putExtra(BookService.EAN, ean);
                     bookIntent.setAction(BookService.FETCH_BOOK);
@@ -188,6 +193,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             return;
         }
 
+        //Clearing fields only when needing to makes life better.
+        clearFields();
+
         String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText(bookTitle);
 
@@ -217,6 +225,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     private void clearFields(){
+        CharSequence clearFields = "Clearing fields";
+        Toast.makeText(getActivity(), clearFields, Toast.LENGTH_SHORT).show();
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText("");
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText("");
         ((TextView) rootView.findViewById(R.id.authors)).setText("");
